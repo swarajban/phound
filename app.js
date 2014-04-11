@@ -1,30 +1,17 @@
 
-/**
- * Module dependencies.
- */
 
-var express = require('express');
-var routes = require('./routes'); // reads
-var path = require('path');
+module.exports = function App (express, path) {
+	this.app = express();
+	this.app.set('port', process.env.PORT || 3000);
+	this.app.set('views', __dirname + '/views');
+	this.app.set('view engine', 'jade');
+	this.app.use(express.bodyParser());
+	this.app.use(express.methodOverride());
+	this.app.use(this.app.router);
+	this.app.use(express.static(path.join(__dirname, 'public')));
 
-var app = express();
-
-// all environments
-app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
-
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-app.get('/', routes.index);
-
-var server = app.listen(app.get('port'), function() {
-	console.log('Listening on port %d', server.address().port);
-});
+	// development only
+	if ('development' == this.app.get('env')) {
+		this.app.use(express.errorHandler());
+	}
+};
