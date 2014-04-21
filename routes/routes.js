@@ -1,5 +1,5 @@
 
-module.exports = function Routes (app, models, _) {
+module.exports = function Routes (app, models, findIPhone, errorHandler) {
 
 	// Route handlers
 	function index (req, res) {
@@ -27,19 +27,61 @@ module.exports = function Routes (app, models, _) {
 			var response = {};
 			if (err) {
 				var errorMessage = "Error saving user: " + err + " " + newUser.getSavingErrorMessage();
-				console.log(errorMessage);
-				response.error = {
-					type: err,
-					message: errorMessage
-				};
+				errorHandler.error(errorMessage, err, res);
 			}
 			else {
 				console.log('Successfully created new user with text id ' + newUserData.textId);
 				response.data = {
 					textId: newUserData.textId
 				};
+				res.json(response);
 			}
-			res.json(response);
+
+		});
+	}
+
+	function alertPhone (req, res) {
+		var textId = req.params.textId;
+		var iCloudUsername = req.body.iCloudUsername;
+		var message = null;
+		var response = {};
+		models.UserModel.find({
+			iCloudUsername: iCloudUsername
+		}, function (err, ids) {
+			if (err === null) {
+				if (ids.length > 0) {
+					models.UserModel.load(ids[0],
+					function (err) {
+						if (err === null) {
+							var iCloudPassword = this.p('iCloudPassword');
+							var deviceId = this.p('deviceId');
+							var findErrorMessage = findIPhone.findIPhone(iCloudUsername, iCloudPassword, deviceId);
+							if (findErrorMessage === null) {
+								response.data = {
+									foundIPhone: true
+								};
+								res.json(response);
+							}
+							else {
+								message = 'could not find iPhone. error: ' + findErrorMessage;
+								errorHandler.error(message, 'FindIPhoneError', res);
+							}
+						}
+						else {
+							message = 'could not load user with id: ' + ids[0] + '. error: ' + JSON.stringify(err);
+							errorHandler.error(message, 'LoadUserError', res);
+						}
+					});
+				}
+				else {
+					message = 'could not find user id from user name: ' + iCloudUsername;
+					errorHandler.error(message, 'LoadUserError', res);
+				}
+			}
+			else {
+				message = 'could not find users with username. error: ' + JSON.stringify(err);
+				errorHandler.error(message, err, res);
+			}
 		});
 	}
 
@@ -47,6 +89,7 @@ module.exports = function Routes (app, models, _) {
 	app.get('/', index);
 	app.get('/userSandbox', userSandbox);
 	app.post('/users', createUser);
+	app.post('/alertPhone/:textId', alertPhone);
 
 
 };
