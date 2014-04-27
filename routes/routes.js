@@ -6,6 +6,15 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 		res.render('index', { title: 'Express' });
 	}
 
+
+	function twilioSandbox (req, res) {
+		var twilioData = req.body;
+		var incomingNumber = twilioData.From;
+		var message = twilioData.Body;
+		console.log('received message from ' + incomingNumber + '\t with message: ' + message);
+		res.send('OK');
+	}
+
 	function userSandbox (req, res) {
 		// remove users
 //		models.UserModel.find(function (err, ids) {
@@ -87,6 +96,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 
 	// Routes
 	app.get('/', index);
+	app.post('/twilioSandbox', twilioSandbox);
 	app.get('/userSandbox', userSandbox);
 	app.post('/users', createUser);
 	app.post('/alertPhone/:textId', alertPhone);
