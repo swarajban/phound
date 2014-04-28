@@ -6,6 +6,7 @@ var path = require('path');
 var redis = require('redis');
 var nohm = require('nohm');
 var _ = require('lodash');
+var exec = require('child_process').exec;
 
 // Internal Modules
 var ErrorHandler = require('./util/errorHandler');
@@ -20,7 +21,7 @@ var errorHandler = new ErrorHandler();
 var phoundApp = new App(express, path);
 var phoundRedis = new PhoundRedis(redis);
 var models = new Models(nohm.Nohm, phoundRedis.client, _);
-var findIPhone = new FindIPhone();
+var findIPhone = new FindIPhone(errorHandler, exec);
 var routes = new Routes(phoundApp.app, models, findIPhone, errorHandler);
 
 var server = phoundApp.app.listen(phoundApp.app.get('port'), function() {

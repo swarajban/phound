@@ -16,6 +16,17 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	}
 
 	function userSandbox (req, res) {
+//		findIPhone.findIPhone('swarajban@gmail.com', 'sav1age26', 'Xkp7hQme6pWsobxGZ/KI1s0mj+q0e2RsEmrG3YZfFKaenip5EkA6sOHYVNSUzmWV',
+//			function (result) {
+//				res.send(result);
+//			}
+//		);
+//		findIPhone.getDevices('swarajban@gmail.com', 'sav1age26',
+//			function onResult (devices) {
+//				res.json(devices);
+//			}
+//		);
+//		res.send('OK');
 		// remove users
 //		models.UserModel.find(function (err, ids) {
 //			_.forEach(ids, function (userId) {
