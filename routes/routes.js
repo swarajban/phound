@@ -6,6 +6,10 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 		res.render('index', { title: 'Express' });
 	}
 
+	function signup (req, res) {
+		res.render('signup', {title: 'Signup'});
+	}
+
 
 	function twilioSandbox (req, res) {
 		var twilioData = req.body;
@@ -111,6 +115,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	app.get('/userSandbox', userSandbox);
 	app.post('/users', createUser);
 	app.post('/alertPhone/:textId', alertPhone);
+	app.get('/signup', signup);
 
 
 };

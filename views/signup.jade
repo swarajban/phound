@@ -1,0 +1,20 @@
+extends layout
+
+block content
+	div.container
+		div.row.signupHeader
+			div.small-12.columns
+				h1 Sign up for Phound
+		form
+			div.row
+				div.large-12.columns
+					label Phone Number
+						input#phoneNumber(type="text", placeholder="5551234567")
+			div.row
+				div.large-12.columns
+					label iCloud Username
+						input#iCloudUsername(type="text", placeholder="swaraj@icloud.me")
+			div.row
+				div.large-12.columns
+					label iCloud Password
+						input#iCloudPassword(type="password")
