@@ -10,6 +10,26 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 		res.render('signup', {title: 'Signup'});
 	}
 
+	function getDevices (req, res) {
+		var iCloudEmail = req.body.iCloudEmail;
+		var iCloudPassword = req.body.iCloudPassword;
+		findIPhone.getDevices(iCloudEmail, iCloudPassword, function (devices) {
+			if (devices !== null) {
+				devices = JSON.parse(devices);
+				var response = {
+					data: {
+						devices: devices
+					}
+				};
+				res.send(response);
+			}
+			else {
+				var errorMessage = "Error finding devices for iCloud user " + iCloudEmail;
+				errorHandler.error(errorMessage, 'GetDevicesError', res);
+			}
+		});
+	}
+
 
 	function twilioSandbox (req, res) {
 		var twilioData = req.body;
@@ -116,6 +136,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	app.post('/users', createUser);
 	app.post('/alertPhone/:textId', alertPhone);
 	app.get('/signup', signup);
+	app.post('/getDevices', getDevices);
 
 
 };

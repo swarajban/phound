@@ -5618,3 +5618,10 @@ th.hide-for-touch {
 
 .signupHeader {
   text-align: center; }
+
+#signupForm {
+  display: none; }
+
+#alertContainer {
+  text-align: center;
+  display: none; }
