@@ -2,11 +2,15 @@
 	text-align: center;
 }
 
-#signupForm {
+#signUpView {
 	display: none;
 }
 
 #alertContainer {
 	text-align: center;
 	display: none;
+}
+
+.stubSubmit {
+	margin-left: -100000px;
 }

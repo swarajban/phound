@@ -5,45 +5,54 @@ block content
 
 		div#spinner
 
-		div.row.signupHeader
-			div.small-12.columns
-				h1 Sign Up for Phound
-
 		div.row#alertContainer
 			div.large-12.columns
 				div#alertDiv.alert-box.alert(data-alert)
 					span#alertMessage hallo
 					a#alertCloseButton.close &times;
 
-		form#getDevicesForm
-			div.row
-				div.large-12.columns
-					label iCloud Email
-						input#iCloudEmail(type="text", placeholder="swaraj@icloud.me", tabindex="1")
-			div.row
-				div.large-12.columns
-					label iCloud Password
-						input#iCloudPassword(type="password", tabindex="2")
+		div#getDevicesView
+			div.row.signupHeader
+				div.small-12.columns
+					h1 Sign Up for Phound
 
-			div.row
-				div.large-12.columns
-					a#getDevicesButton.button.expand(tabindex="3") Get Available Devices
+			form#getDevicesForm
+				div.row
+					div.large-12.columns
+						label iCloud Email
+							input#iCloudEmail(type="email", placeholder="swaraj@icloud.me", tabindex="1")
+				div.row
+					div.large-12.columns
+						label iCloud Password
+							input#iCloudPassword(type="password", tabindex="2")
 
-		form#signupForm
+				div.row
+					div.large-12.columns
+						a#getDevicesButton.button.expand(tabindex="3") Get Available Devices
 
-			div.row
-				div.large-12.columns
-					label Phone Number
-						input#phoneNumber(type="text", placeholder="5551234567", tabindex="4")
+				input.stubSubmit(type="submit")
 
-			div.row
-				div.large-12.columns
-					label Select Device
-						select#devices(tabindex="5")
+		div#signUpView
+			div.row.signupHeader
+				div.small-12.columns
+					h1 Sign Up for Phound
+			form#signupForm
+				div.row
+					div.large-12.columns
+						label Phone Number
+							input#phoneNumber(type="text", placeholder="5551234567", pattern="[0-9]*", tabindex="4")
 
-			div.row
-				div.large-12.columns
-					a#selectDeviceButton.button.expand(tabindex="6") Sign Up!
+				div.row
+					div.large-12.columns
+						label Select Device
+							select#devices(tabindex="5")
+
+				div.row
+					div.large-12.columns
+						a#signUpBotton.button.expand(tabindex="6") Sign Up!
+
+				input.stubSubmit(type="submit")
+
 
 block scripts
 	script(src="/js/signup.js")

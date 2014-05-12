@@ -4,7 +4,18 @@
 window.onload = function () {
 	var spinner = initializeSpinner();
 
+	// Get Devices Form View
+	var getDevicesForm = document.getElementById('getDevicesForm');
+	getDevicesForm.addEventListener("submit", function(event){
+		event.preventDefault();
+		getDevices();
+	}, false);
+
 	document.getElementById('getDevicesButton').onclick = function () {
+		getDevices();
+	};
+
+	function getDevices () {
 		hideAlert();
 
 		var iCloudEmail = document.getElementById('iCloudEmail').value;
@@ -20,17 +31,17 @@ window.onload = function () {
 
 		toggleSpinner(true);
 
-		var signupData = {
+		var iCloudCredentials = {
 			iCloudEmail: iCloudEmail,
 			iCloudPassword: iCloudPassword
 		};
 		var request = new XMLHttpRequest();
 		request.open('POST', '/getDevices', true);
 		request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-		request.onload = onSignup;
-		request.send(JSON.stringify(signupData));
+		request.onload = onGetDevices;
+		request.send(JSON.stringify(iCloudCredentials));
 
-		function onSignup () {
+		function onGetDevices () {
 			toggleSpinner(false);
 			if (request.status === 200) {
 				try {
@@ -47,14 +58,73 @@ window.onload = function () {
 			}
 			showAlert('Error fetching devices from server');
 		}
-	};
-
-	function showDeviceSelect (devices) {
-		document.getElementById('getDevicesForm').style.display = 'none';
-		document.getElementById('signupForm').style.display = 'block';
-		console.log(devices);
 	}
 
+	// Sign Up Form View
+
+	function showDeviceSelect (devices) {
+		document.getElementById('getDevicesView').style.display = 'none';
+		document.getElementById('signUpView').style.display = 'block';
+		var deviceDropdown = document.getElementById('devices');
+		deviceDropdown.options.length = 0;
+		devices.forEach (function (device) {
+			deviceDropdown.add(new Option(device.name, device.deviceID));
+		});
+	}
+
+	var signupForm = document.getElementById('signupForm');
+	signupForm.addEventListener("submit", function(event){
+		event.preventDefault();
+		signUp();
+	}, false);
+
+	document.getElementById('signUpBotton').onclick = function () {
+		signUp();
+	};
+
+	function signUp () {
+		hideAlert();
+		var phoneNumber = document.getElementById('phoneNumber').value;
+		if (phoneNumber === '') {
+			showAlert('Enter your phone number');
+			return;
+		}
+
+		var signupData = {
+			iCloudEmail: document.getElementById('iCloudEmail').value,
+			iCloudPassword: document.getElementById('iCloudPassword').value,
+			phoneNumber: phoneNumber,
+			deviceID: document.getElementById('devices').value
+		};
+
+		var request = new XMLHttpRequest();
+		request.open('POST', '/signup', true);
+		request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		request.onload = onSignUp;
+		request.send(JSON.stringify(signupData));
+
+		function onSignUp () {
+			toggleSpinner(false);
+			if (request.status === 200) {
+				try {
+					var response = JSON.parse(request.responseText);
+					if (response.data) {
+
+						return;
+//						var devices = response.data.devices;
+//						if (devices.length > 0) {
+//							showDeviceSelect(devices);
+//							return;
+//						}
+					}
+				}
+				catch (e) { }
+			}
+			showAlert('Error signing up');
+		}
+	}
+
+	// Loading spinner functions
 	function initializeSpinner () {
 		var opts = {
 			lines: 13, // The number of lines to draw
@@ -81,7 +151,6 @@ window.onload = function () {
 		if (toggle) {
 			var target = document.getElementById('spinner');
 			spinner.spin(target);
-
 		}
 		else {
 			spinner.stop();
