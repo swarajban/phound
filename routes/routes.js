@@ -6,7 +6,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 		res.render('index', { title: 'Express' });
 	}
 
-	function signup (req, res) {
+	function renderSignupPage (req, res) {
 		res.render('signup', {title: 'Signup'});
 	}
 
@@ -21,7 +21,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 						devices: devices
 					}
 				};
-				res.send(response);
+				res.json(response);
 			}
 			else {
 				var errorMessage = "Error finding devices for iCloud user " + iCloudEmail;
@@ -40,6 +40,21 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	}
 
 	function userSandbox (req, res) {
+//		models.UserModel.createOrUpdate('swaraj@maildrop.cc', 'pass', 'devID', function (err, textID) {
+//			console.log('sup');
+//		});
+
+		models.UserModel.findAndLoad({
+			iCloudEmail: 'swaraj@maildrop.cc'
+		}, function (err, users) {
+			var user = users[0];
+			console.log('removed');
+//			var props = user.allProperties(true);
+//			console.log(props);
+		});
+		res.send('ok');
+
+
 //		findIPhone.findIPhone('swarajban@gmail.com', 'sav1age26', 'Xkp7hQme6pWsobxGZ/KI1s0mj+q0e2RsEmrG3YZfFKaenip5EkA6sOHYVNSUzmWV',
 //			function (result) {
 //				res.send(result);
@@ -80,7 +95,6 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 				};
 				res.json(response);
 			}
-
 		});
 	}
 
@@ -135,8 +149,9 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	app.get('/userSandbox', userSandbox);
 	app.post('/users', createUser);
 	app.post('/alertPhone/:textId', alertPhone);
-	app.get('/signup', signup);
+	app.get('/signup', renderSignupPage);
 	app.post('/getDevices', getDevices);
+	app.post('/signup', createUser);
 
 
 };

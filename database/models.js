@@ -9,7 +9,7 @@ module.exports = function Models (nohm, redisClient, _) {
 
 		self.UserModel = nohm.model('User', {
 			properties: {
-				iCloudUsername: {
+				iCloudEmail: {
 					type: 'string',
 					unique: true,
 					validations: [
@@ -17,26 +17,18 @@ module.exports = function Models (nohm, redisClient, _) {
 					],
 					index: true
 				},
-				iCloudPassword: {
+				encryptedICloudPassword: {
 					type: 'string',
 					validations: [
 						'notEmpty'
 					]
 				},
-				deviceId: {
+				deviceID: {
 					type: 'string',
 					unique: true,
 					validations: [
 						'notEmpty'
 					]
-				},
-				textId: {
-					type: 'string',
-					unique: true,
-					validations: [
-						'notEmpty'
-					],
-					index: true
 				}
 			},
 
@@ -68,6 +60,71 @@ module.exports = function Models (nohm, redisClient, _) {
 			}
 			// TODO: Keep generating random IDs until we find a unique one. Model validation will handle this for now
 			return getRandomId(idLength);
+		};
+
+		/**
+		 * Given an iCloudEmail, password, and deviceID, creates a new user if no user with the same
+		 * iCloudEmail exists, or updates an existing user. createOrUpdate always generates a new
+		 * textID used to decrypt the stored iCloudPassword.
+		 *
+		 * createOrUpdate accepts a callback with the header function (err, textID) where textID is the
+		 * textID that can be used to decrypt the iCloudPassword, and err may contain an error message if
+		 * there was a problem creating or updating a user.
+		 *
+		 * @param iCloudEmail
+		 * @param iCloudPassword
+		 * @param deviceID
+		 * @param callback
+		 */
+		self.UserModel.createOrUpdate = function (iCloudEmail, iCloudPassword, deviceID, callback) {
+			var errorMessage;
+			var textID = self.UserModel.generateTextId(self.UserModel.textIdLength);
+			var encryptionKey = textID + deviceID;
+			var encryptedPassword = self.UserModel.getEncryptedPassword(iCloudPassword, encryptionKey);
+			var user;
+
+			// Look to see if user exists
+			self.UserModel.findAndLoad({
+				iCloudEmail: iCloudEmail
+			}, function (err, users) {
+				if (err === null && users.length > 0) { // User exists / no error
+					user = users[0];
+					user.property({
+						encryptedICloudPassword: encryptedPassword,
+						deviceID: deviceID
+					});
+				}
+				else { // No user exists, create one!
+ 					user = new self.UserModel();
+					user.property({
+						iCloudEmail: iCloudEmail,
+						encryptedICloudPassword: encryptedPassword,
+						deviceID: deviceID
+					});
+				}
+				user.save(function (err) {
+					if (err) {
+						errorMessage = "Error saving user: " + err + " " + user.getSavingErrorMessage();
+						callback(errorMessage);
+					}
+					else {
+						callback(null, textID); // success!
+					}
+				});
+			});
+
+
+		};
+
+		var crypto = require('crypto');
+		self.UserModel.getEncryptedPassword = function (rawPassword, key) {
+			var cipher = crypto.createCipher('aes256', key);
+			return cipher.update(rawPassword, 'utf8', 'hex') + cipher.final('hex');
+		};
+
+		self.UserModel.getDecryptedPassword = function (encryptedPassword, key) {
+			var decipher = crypto.createDecipher('aes256', key);
+			return decipher.update(encryptedPassword, 'hex', 'utf8') + decipher.final('utf8');
 		};
 
 		// Text ID Length for User Models is 5 for now
