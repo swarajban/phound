@@ -54,7 +54,9 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 					var rawPassword = user.getDecryptedPassword(textID);
 					if (rawPassword !== null) {
 						var deviceID = user.p('deviceID');
-						findIPhone.findIPhone(iCloudEmail, rawPassword, deviceID);
+						findIPhone.findIPhone(iCloudEmail, rawPassword, deviceID, function (result) {
+							console.log('successfully phound phone: ', result);
+						});
 					}
 					else {
 						console.log('could not decrypt pw');
