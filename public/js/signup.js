@@ -84,16 +84,9 @@ window.onload = function () {
 
 	function signUp () {
 		hideAlert();
-		var phoneNumber = document.getElementById('phoneNumber').value;
-		if (phoneNumber === '') {
-			showAlert('Enter your phone number');
-			return;
-		}
-
 		var signupData = {
 			iCloudEmail: document.getElementById('iCloudEmail').value,
 			iCloudPassword: document.getElementById('iCloudPassword').value,
-			phoneNumber: phoneNumber,
 			deviceID: document.getElementById('devices').value
 		};
 
@@ -108,20 +101,25 @@ window.onload = function () {
 			if (request.status === 200) {
 				try {
 					var response = JSON.parse(request.responseText);
-					if (response.data) {
-
-						return;
-//						var devices = response.data.devices;
-//						if (devices.length > 0) {
-//							showDeviceSelect(devices);
-//							return;
-//						}
+					if (response !== null) {
+						if (response.data && response.data.textID) {
+							showTextID(response.data.textID);
+							return;
+						}
+						else if (response.error && response.error.message) {
+							showAlert('Error signing up: ' + response.error.message);
+							return;
+						}
 					}
 				}
 				catch (e) { }
 			}
 			showAlert('Error signing up');
 		}
+	}
+
+	function showTextID (textID) {
+		console.log('text id for user: ' + textID);
 	}
 
 	// Loading spinner functions

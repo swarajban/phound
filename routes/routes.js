@@ -77,25 +77,25 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 //		});
 	}
 
-	function createUser (req, res) {
-		var newUser = new models.UserModel();
-		var newUserData = req.body;
-		newUserData.textId = models.UserModel.generateTextId(models.UserModel.textIdLength);
-		newUser.p(newUserData);
-		newUser.save(function (err) {
-			var response = {};
-			if (err) {
-				var errorMessage = "Error saving user: " + err + " " + newUser.getSavingErrorMessage();
-				errorHandler.error(errorMessage, err, res);
-			}
-			else {
-				console.log('Successfully created new user with text id ' + newUserData.textId);
-				response.data = {
-					textId: newUserData.textId
-				};
-				res.json(response);
-			}
-		});
+	function signUpUser (req, res) {
+		var userParams = req.body;
+		models.UserModel.createOrUpdate(userParams.iCloudEmail,
+										userParams.iCloudPassword,
+										userParams.deviceID,
+			function (err, textID) {
+				if (err === null) {
+					// Successfully created or updated user
+					var response = {
+						data: {
+							textID: textID
+						}
+					};
+					res.json(response);
+				}
+				else {
+					errorHandler.error(err, 'SignupError', res);
+				}
+			});
 	}
 
 	function alertPhone (req, res) {
@@ -147,11 +147,10 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	app.get('/', index);
 	app.post('/twilioSandbox', twilioSandbox);
 	app.get('/userSandbox', userSandbox);
-	app.post('/users', createUser);
 	app.post('/alertPhone/:textId', alertPhone);
 	app.get('/signup', renderSignupPage);
 	app.post('/getDevices', getDevices);
-	app.post('/signup', createUser);
+	app.post('/signup', signUpUser);
 
 
 };

@@ -93,6 +93,7 @@ module.exports = function Models (nohm, redisClient, _) {
 						encryptedICloudPassword: encryptedPassword,
 						deviceID: deviceID
 					});
+					console.log('Updating user with email: ' + iCloudEmail);
 				}
 				else { // No user exists, create one!
  					user = new self.UserModel();
@@ -101,6 +102,7 @@ module.exports = function Models (nohm, redisClient, _) {
 						encryptedICloudPassword: encryptedPassword,
 						deviceID: deviceID
 					});
+					console.log('Creating new user with email: ' + iCloudEmail);
 				}
 				user.save(function (err) {
 					if (err) {
