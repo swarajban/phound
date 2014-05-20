@@ -1,16 +1,31 @@
-.signupHeader {
-	text-align: center;
-}
-
 #signUpView {
 	display: none;
 }
 
-#alertContainer {
-	text-align: center;
+.signupHeader h1{
+	color: white;
+}
+
+#alertContainer, #showTextIDView {
 	display: none;
 }
 
 .stubSubmit {
 	margin-left: -100000px;
+}
+
+#showTextIDView {
+
+	.textIDPanel {
+		padding: 50px;
+
+	}
+}
+
+.bodyContainer {
+	background-image: url('../img/denim_@2X.png');
+	height: 100%;
+	position: relative;
+	top: 0;
+	left: 0;
 }

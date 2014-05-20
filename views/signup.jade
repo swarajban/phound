@@ -1,18 +1,18 @@
 extends layout
 
 block content
-	div.container
+	div.container.signUpContaine
 
 		div#spinner
 
-		div.row#alertContainer
+		div.row#alertContainer.text-center
 			div.large-12.columns
 				div#alertDiv.alert-box.alert(data-alert)
 					span#alertMessage hallo
 					a#alertCloseButton.close &times;
 
 		div#getDevicesView
-			div.row.signupHeader
+			div.row.signupHeader.text-center
 				div.small-12.columns
 					h1 Sign Up for Phound
 
@@ -33,7 +33,7 @@ block content
 				input.stubSubmit(type="submit")
 
 		div#signUpView
-			div.row.signupHeader
+			div.row.signupHeader.text-center
 				div.small-12.columns
 					h1 Sign Up for Phound
 			form#signupForm
@@ -47,6 +47,21 @@ block content
 						a#signUpBotton.button.expand(tabindex="6") Sign Up!
 
 				input.stubSubmit(type="submit")
+
+		div#showTextIDView
+			div.row.signUpSuccessBar.text-center
+				div.small-12.columns
+					div#successDiv.alert-box.success.radius
+						span#successMessage Successfully Signed Up
+
+			div.row.textIDMessage
+				div.small-12.columns
+					div.panel.radius.textIDPanel
+						h2#textIDMessage fad
+						hr
+						h4#instructionMessage fads
+
+
 
 
 block scripts

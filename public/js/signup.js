@@ -84,8 +84,9 @@ window.onload = function () {
 
 	function signUp () {
 		hideAlert();
+		var iCloudEmail = document.getElementById('iCloudEmail').value;
 		var signupData = {
-			iCloudEmail: document.getElementById('iCloudEmail').value,
+			iCloudEmail: iCloudEmail,
 			iCloudPassword: document.getElementById('iCloudPassword').value,
 			deviceID: document.getElementById('devices').value
 		};
@@ -103,7 +104,7 @@ window.onload = function () {
 					var response = JSON.parse(request.responseText);
 					if (response !== null) {
 						if (response.data && response.data.textID) {
-							showTextID(response.data.textID);
+							showTextID(response.data.textID, iCloudEmail);
 							return;
 						}
 						else if (response.error && response.error.message) {
@@ -118,8 +119,11 @@ window.onload = function () {
 		}
 	}
 
-	function showTextID (textID) {
-		console.log('text id for user: ' + textID);
+	function showTextID (textID, iCloudEmail) {
+		document.getElementById('signUpView').style.display = 'none';
+		document.getElementById('showTextIDView').style.display = 'block';
+		document.getElementById('textIDMessage').textContent = 'Your text ID is ' + textID;
+		document.getElementById('instructionMessage').textContent = 'Text "' + iCloudEmail + ' ' + textID + '" to (415) 528-7662 to find your phone!';
 	}
 
 	// Loading spinner functions
