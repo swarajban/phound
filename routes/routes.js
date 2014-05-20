@@ -39,6 +39,33 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 		res.send('OK');
 	}
 
+	function findPhone (req, res) {
+		var message = req.body.Body;
+		console.log('received text message: ' + message);
+		var userInfo = message.split(' ');
+		if (userInfo.length === 2) {
+			var iCloudEmail = userInfo[0];
+			var textID = userInfo[1];
+			models.UserModel.findAndLoad({
+				iCloudEmail: iCloudEmail
+			}, function (err, users) {
+				if (err === null && users.length === 1) {
+					var user = users[0];
+					var rawPassword = user.getDecryptedPassword(textID);
+					if (rawPassword !== null) {
+						var deviceID = user.p('deviceID');
+						findIPhone.findIPhone(iCloudEmail, rawPassword, deviceID);
+					}
+					else {
+						console.log('could not decrypt pw');
+					}
+				}
+
+			});
+		}
+		res.send('OK');
+	}
+
 	function userSandbox (req, res) {
 //		models.UserModel.createOrUpdate('swaraj@maildrop.cc', 'pass', 'devID', function (err, textID) {
 //			console.log('sup');
@@ -151,6 +178,7 @@ module.exports = function Routes (app, models, findIPhone, errorHandler) {
 	app.get('/signup', renderSignupPage);
 	app.post('/getDevices', getDevices);
 	app.post('/signup', signUpUser);
+	app.post('/findPhone', findPhone);
 
 
 };

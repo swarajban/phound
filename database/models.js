@@ -41,6 +41,19 @@ module.exports = function Models (nohm, redisClient, _) {
 						});
 					});
 					return errorMessage;
+				},
+
+				getDecryptedPassword: function (textID) {
+					var deviceID = this.p('deviceID');
+					var encryptedPassword = this.p('encryptedICloudPassword');
+					var decryptionKey = textID + deviceID;
+					var decryptedPassword = null;
+					try {
+						return self.UserModel.getDecryptedPassword(encryptedPassword, decryptionKey);
+					}
+					catch (e) {
+						return null;
+					}
 				}
 			}
 		});
