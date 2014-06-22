@@ -1,5 +1,25 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	div.container.landingContainer.text-center
+		div.row.title
+			h1 Phound
+		div.row.desc
+			h2 Easily locate your iPhone anywhere
+		div.row.steps
+			div.small-4.columns
+				h3 Sign Up
+			div.small-4.columns
+				h3 Text Code to
+				h3 (415) 528-7662
+			div.small-4.columns
+				h3 Find your iPhone
+		br
+		div.row.signup
+			div.small-12.columns
+				a#signupButton.button.expand(href="/signup") Sign Up
+
+
+
+
+
